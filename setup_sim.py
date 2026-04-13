@@ -8,8 +8,10 @@ from namelist     import generate_user_nl_eam
 from f90_patch    import generate_f90_tracer_block, patch_f90_file
 from xml_config   import change_xml_config_files
 
-# Directory containing this script — JSON configs are resolved relative to it
+# Directory containing this script — JSON configs and F90 source are resolved relative to it
 SCRIPT_DIR = Path(__file__).parent
+
+F90_RELATIVE_PATH = 'SourceMods/src.eam/atm_import_export.F90'
 
 
 def main():
@@ -34,9 +36,13 @@ def main():
     # Write the EAM namelist into the case directory
     generate_user_nl_eam(water_tags, output_path=casedir / 'user_nl_eam')
 
-    # Patch the Fortran source file inside the case directory
+    # Read F90 from run_setup/, write patched version into $CASEDIR/SourceMods/
     tracer_block = generate_f90_tracer_block(water_tags)
-    patch_f90_file(casedir / 'SourceMods/src.eam/atm_import_export.F90', tracer_block)
+    patch_f90_file(
+        source_path=SCRIPT_DIR / F90_RELATIVE_PATH,
+        dest_path=casedir / F90_RELATIVE_PATH,
+        tracer_block=tracer_block,
+    )
 
     # Apply CESM XML settings — xmlchange must be run from inside the case directory
     change_xml_config_files(water_tags, casedir=casedir, **run_config)

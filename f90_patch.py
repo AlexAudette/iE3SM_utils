@@ -1,3 +1,6 @@
+from pathlib import Path
+
+
 def generate_f90_tracer_block(water_tags: dict) -> str:
     """
     Generate the Fortran if/else if block for water tracer surface flux sources.
@@ -37,24 +40,27 @@ def generate_f90_tracer_block(water_tags: dict) -> str:
     return '\n'.join(lines)
 
 
-def patch_f90_file(f90_path: str, tracer_block: str) -> None:
+def patch_f90_file(source_path: Path, dest_path: Path, tracer_block: str) -> None:
     """
-    Replace the region between the marker comments in the F90 file
-    with the generated tracer block.
+    Read atm_import_export.F90 from source_path, insert the tracer block
+    between the marker comments, and write the result to dest_path.
+
+    source_path : path to the template F90 file (relative to run_setup/)
+    dest_path   : path to write the patched file (inside $CASEDIR/SourceMods/)
     """
     START_MARKER = '! *** Add water tracer source definition here:'
     END_MARKER   = '! *** Water tracer source definition ended.'
 
-    with open(f90_path, 'r') as fh:
+    with open(source_path, 'r') as fh:
         content = fh.read()
 
     start_idx = content.find(START_MARKER)
     if start_idx == -1:
-        raise ValueError(f'Start marker not found in {f90_path}')
+        raise ValueError(f'Start marker not found in {source_path}')
 
     end_idx = content.find(END_MARKER, start_idx + len(START_MARKER))
     if end_idx == -1:
-        raise ValueError(f'End marker not found after start marker in {f90_path}')
+        raise ValueError(f'End marker not found after start marker in {source_path}')
 
     new_content = (
         content[:start_idx]
@@ -63,7 +69,8 @@ def patch_f90_file(f90_path: str, tracer_block: str) -> None:
         + content[end_idx:]  # closing marker and everything after it
     )
 
-    with open(f90_path, 'w') as fh:
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(dest_path, 'w') as fh:
         fh.write(new_content)
 
-    print(f'Patched {f90_path} successfully.')
+    print(f'Patched {source_path} -> {dest_path}')
