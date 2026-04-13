@@ -5,7 +5,7 @@
 Clone the water tracer fork of E3SM:
 
 ```bash
-git clone -b ie3sm1.0 --recursive https://github.com/AlexAudette/E3SM.git E3SM_wtrc
+git clone -b ie3sm1.0 --recursive https://github.com/AlexAudette/E3SM.git ~/E3SM_wtrc
 cd E3SM_wtrc
 ```
 
@@ -17,10 +17,10 @@ If you are on Perlmutter, no further machine configuration is needed. If you are
 
 ### 1. Define your case directory
 
-Set a variable pointing to where your case will live. On Perlmutter, cases are stored under `/global/homes/<initial>/<username>/cases_E3SM/`:
+Set a variable pointing to where your case will live. On Perlmutter, my cases are stored under `/global/homes/<initial>/<username>/cases_E3SM/`:
 
 ```bash
-CASEDIR="/global/homes/a/aaudette/cases_E3SM/cloud_locking_runs/production/1850_free"
+export CASEDIR="/global/homes/a/aaudette/cases_E3SM/<casename>"
 ```
 
 ### 2. Create the case
@@ -28,12 +28,7 @@ CASEDIR="/global/homes/a/aaudette/cases_E3SM/cloud_locking_runs/production/1850_
 Run `create_newcase` from the E3SM `cime/scripts` directory:
 
 ```bash
-E3SM_wtrc/cime/scripts/create_newcase \
-    --case "${CASEDIR}" \
-    --compset 1850SOI_EAM%CMIP6_ELM%SPBC_MPASSI_MPASO_MOSART_SGLC_SWAV \
-    --res ne30pg2_EC30to60E2r2 \
-    --mach pm-cpu \
-    --project m4426
+/global/homes/<initial>/<username>/E3SM_wtrc/cime/scripts/create_newcase --case $CASEDIR --compset 1850SOI_EAM%CMIP6_ELM%SPBC_MPASSI_MPASO_MOSART_SGLC_SWAV --res ne30pg2_EC30to60E2r2 --mach pm-cpu --project m4426
 ```
 
 The key options are:
@@ -96,12 +91,12 @@ Before running, review and edit the two JSON files:
     },
     "ARC": {
         "lat_bounds": [70, 90],
-        "rstd": 0.0023129006855000522,
+        "rstd": 0.003,
         "description": "Arctic water vapour"
     },
     "ROW": {
         "lat_bounds": [-90, 70],
-        "rstd": 0.9976870993145,
+        "rstd": 0.997,
         "description": "Rest of world water vapour"
     }
 }
@@ -121,7 +116,7 @@ Before running, review and edit the two JSON files:
 
 #### Configure the water tracer files
 
-From the `run_setup/` directory, pass `$CASEDIR` as an argument:
+From the `iE3SM_utils/` directory, pass `$CASEDIR` as an argument:
 
 ```bash
 python setup_sim.py $CASEDIR

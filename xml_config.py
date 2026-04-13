@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 def _xmlchange(*args: str, casedir: Path) -> None:
-    cmd = ['./xmlchange'] + list(args)
+    cmd = [f'{casedir}/xmlchange'] + list(args)
     print('Running:', ' '.join(cmd))
     subprocess.run(cmd, check=True, cwd=casedir)
 
