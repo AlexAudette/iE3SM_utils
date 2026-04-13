@@ -5,22 +5,27 @@ Python tooling for configuring CESM/EAM water tracer simulations. Given a set of
 ## Project structure
 
 ```
-setup_sim.py               # Entry point — run this
-tracer_config.py           # JSON loading
-namelist.py                # Generates user_nl_eam
-f90_patch.py               # Patches atm_import_export.F90
-xml_config.py              # Runs xmlchange commands
-tracer_configuration.json  # Tracer definitions (edit this)
-run_config.json            # CESM case run parameters (edit this)
-atm_import_export.F90      # Fortran source to be patched
+run_setup/                 # Scripts and config — run from here
+├── setup_sim.py           # Entry point — run this
+├── tracer_config.py       # JSON loading
+├── namelist.py            # Generates user_nl_eam
+├── f90_patch.py           # Patches atm_import_export.F90
+├── xml_config.py          # Runs xmlchange commands
+├── tracer_configuration.json  # Tracer definitions (edit this)
+└── run_config.json            # CESM case run parameters (edit this)
+
+$CASEDIR/                  # Files written here by setup_sim.py
+├── SourceMods/src.eam/
+│   └── atm_import_export.F90
+└── user_nl_eam
 ```
 
 ## Usage
 
-From inside your CESM case directory:
+From the `run_setup/` directory, pass your case directory as an argument:
 
 ```bash
-python setup_sim.py
+python setup_sim.py $CASEDIR
 ```
 
 This will:
