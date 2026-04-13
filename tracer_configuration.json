@@ -1,0 +1,17 @@
+{
+    "H2O": {
+        "lat_bounds": [-90, 90],
+        "rstd": 1.0,
+        "description": "Bulk water copy for ratio calculation. Required in each water tracer run."
+    },
+    "ARC": {
+        "lat_bounds": [70, 90],
+        "rstd": 0.0023129006855000522,
+        "description": "Arctic water vapour"
+    },
+    "ROW": {
+        "lat_bounds": [-90, 70],
+        "rstd": 0.9976870993145,
+        "description": "Bulk water copy for ratio calculation. Required in each water tracer run."
+    }
+}
