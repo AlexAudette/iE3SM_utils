@@ -1,4 +1,7 @@
-def generate_user_nl_eam(water_tags: dict, output_path: str = 'namelist_files/user_nl_eam') -> None:
+from __future__ import print_function
+
+
+def generate_user_nl_eam(water_tags, output_path='namelist_files/user_nl_eam'):
     """
     Write a user_nl_eam namelist file from the water_tags definition.
 
@@ -10,10 +13,10 @@ def generate_user_nl_eam(water_tags: dict, output_path: str = 'namelist_files/us
     fincl1 contains the full diagnostic set (all phases + precip + flux).
     fincl2 contains a reduced set (vapour + precip only).
     """
-    tag_names = list(water_tags.keys())  # preserve dict order
+    tag_names = list(water_tags.keys())  # preserves order (OrderedDict in 2.7)
 
     # wtrc_in_names
-    wtrc_names_str = ', '.join(f"'{t}'" for t in tag_names)
+    wtrc_names_str = ', '.join("'{0}'".format(t) for t in tag_names)
 
     # wtrc_fixed_rstd: read from each tag's 'rstd' key in water_tags
     rstd_values = [str(water_tags[t].get('rstd', 0.0)) for t in tag_names]
@@ -21,13 +24,13 @@ def generate_user_nl_eam(water_tags: dict, output_path: str = 'namelist_files/us
 
     def phase_fields(tag):
         """V/I/L phase fields for a tracer."""
-        return [f'{tag}V', f'{tag}I', f'{tag}L']
+        return ['{0}V'.format(tag), '{0}I'.format(tag), '{0}L'.format(tag)]
 
     def precip_fields(tag):
         """Precip fields for a tracer (mixed case suffixes follow iCAM convention)."""
         return [
-            f'PRECSL_{tag}S', f'PRECRL_{tag}R',
-            f'PRECSC_{tag}s', f'PRECRC_{tag}r',
+            'PRECSL_{0}S'.format(tag), 'PRECRL_{0}R'.format(tag),
+            'PRECSC_{0}s'.format(tag), 'PRECRC_{0}r'.format(tag),
         ]
 
     # fincl1: base fields, then per-tag: large-scale precip, phases, conv precip
@@ -39,12 +42,12 @@ def generate_user_nl_eam(water_tags: dict, output_path: str = 'namelist_files/us
     ]
     fincl1_tracer = []
     for tag in tag_names:
-        ls_precip = [f'PRECSL_{tag}S', f'PRECRL_{tag}R']
-        cv_precip = [f'PRECSC_{tag}s', f'PRECRC_{tag}r']
+        ls_precip = ['PRECSL_{0}S'.format(tag), 'PRECRL_{0}R'.format(tag)]
+        cv_precip = ['PRECSC_{0}s'.format(tag), 'PRECRC_{0}r'.format(tag)]
         fincl1_tracer += ls_precip + phase_fields(tag) + cv_precip
     for tag in tag_names:
         if tag != 'H2O':
-            fincl1_tracer += [f'QFLX_{tag}']
+            fincl1_tracer += ['QFLX_{0}'.format(tag)]
 
     # fincl2: base fields + vapour + precip per tag, then QFLX for non-H2O at end
     fincl2_base = [
@@ -53,19 +56,19 @@ def generate_user_nl_eam(water_tags: dict, output_path: str = 'namelist_files/us
     ]
     fincl2_tracer = []
     for tag in tag_names:
-        fincl2_tracer += [f'{tag}V'] + precip_fields(tag)
+        fincl2_tracer += ['{0}V'.format(tag)] + precip_fields(tag)
     for tag in tag_names:
         if tag != 'H2O':
-            fincl2_tracer += [f'QFLX_{tag}']
+            fincl2_tracer += ['QFLX_{0}'.format(tag)]
 
-    fincl1_str = ','.join(f"'{f}'" for f in fincl1_base + fincl1_tracer)
-    fincl2_str = ','.join(f"'{f}'" for f in fincl2_base + fincl2_tracer)
+    fincl1_str = ','.join("'{0}'".format(f) for f in fincl1_base + fincl1_tracer)
+    fincl2_str = ','.join("'{0}'".format(f) for f in fincl2_base + fincl2_tracer)
 
     lines = [
         '',
         '',
-        f'wtrc_in_names = {wtrc_names_str}',
-        f'wtrc_fixed_rstd = {rstd_str}',
+        'wtrc_in_names = {0}'.format(wtrc_names_str),
+        'wtrc_fixed_rstd = {0}'.format(rstd_str),
         '',
         'wisotope\t\t= .false.',
         'use_mass_borrower = .true.',
@@ -74,12 +77,12 @@ def generate_user_nl_eam(water_tags: dict, output_path: str = 'namelist_files/us
         'mfilt  = 1,1',
         "avgflag_pertape = 'A','A'",
         '',
-        f'fincl1 = {fincl1_str}',
+        'fincl1 = {0}'.format(fincl1_str),
         '',
-        f'fincl2 = {fincl2_str}',
+        'fincl2 = {0}'.format(fincl2_str),
     ]
 
     with open(output_path, 'w') as fh:
         fh.write('\n'.join(lines) + '\n')
 
-    print(f'Written {output_path}')
+    print('Written {0}'.format(output_path))

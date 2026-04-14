@@ -20,9 +20,14 @@ $CASEDIR/                  # Files written here by setup_sim.py
 └── user_nl_eam
 ```
 
+## Requirements
+
+Python 2.7 or later. No third-party packages are required — only modules from
+the standard library (`json`, `collections`, `os`, `subprocess`, `argparse`).
+
 ## Usage
 
-From the `run_setup/` directory, pass your case directory as an argument:
+From the `iE3SM_utils/` directory, pass your case directory as an argument:
 
 ```bash
 python setup_sim.py $CASEDIR

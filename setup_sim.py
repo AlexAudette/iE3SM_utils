@@ -1,17 +1,19 @@
-#!/usr/env/python
+#!/usr/bin/env python
+from __future__ import print_function
 
 import argparse
-from pathlib import Path
+import os
+import sys
 
 from tracer_config import load_tracer_configuration, load_run_config
-from namelist     import generate_user_nl_eam
-from f90_patch    import generate_f90_tracer_block, patch_f90_file
-from xml_config   import change_xml_config_files
+from namelist      import generate_user_nl_eam
+from f90_patch     import generate_f90_tracer_block, patch_f90_file
+from xml_config    import change_xml_config_files
 
-# Directory containing this script — JSON configs and F90 source are resolved relative to it
-SCRIPT_DIR = Path(__file__).parent
+# Directory containing this script - JSON configs and F90 source are resolved relative to it
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-F90_RELATIVE_PATH = 'SourceMods/src.eam/atm_import_export.F90'
+F90_RELATIVE_PATH = os.path.join('SourceMods', 'src.eam', 'atm_import_export.F90')
 
 
 def main():
@@ -20,31 +22,30 @@ def main():
     )
     parser.add_argument(
         'casedir',
-        type=Path,
         help='Path to the CESM case directory (i.e. $CASEDIR)',
     )
     args = parser.parse_args()
-    casedir = args.casedir.resolve()
+    casedir = os.path.realpath(args.casedir)
 
-    if not casedir.is_dir():
-        raise SystemExit(f'Error: case directory not found: {casedir}')
+    if not os.path.isdir(casedir):
+        sys.exit('Error: case directory not found: {0}'.format(casedir))
 
     # Load configuration from alongside this script
-    water_tags = load_tracer_configuration(SCRIPT_DIR / 'tracer_configuration.json')
-    run_config  = load_run_config(SCRIPT_DIR / 'run_config.json')
+    water_tags = load_tracer_configuration(os.path.join(SCRIPT_DIR, 'tracer_configuration.json'))
+    run_config  = load_run_config(os.path.join(SCRIPT_DIR, 'run_config.json'))
 
     # Write the EAM namelist into the case directory
-    generate_user_nl_eam(water_tags, output_path=casedir / 'user_nl_eam')
+    generate_user_nl_eam(water_tags, output_path=os.path.join(casedir, 'user_nl_eam'))
 
     # Read F90 from run_setup/, write patched version into $CASEDIR/SourceMods/
     tracer_block = generate_f90_tracer_block(water_tags)
     patch_f90_file(
-        source_path=SCRIPT_DIR / F90_RELATIVE_PATH,
-        dest_path=casedir / F90_RELATIVE_PATH,
+        source_path=os.path.join(SCRIPT_DIR, F90_RELATIVE_PATH),
+        dest_path=os.path.join(casedir, F90_RELATIVE_PATH),
         tracer_block=tracer_block,
     )
 
-    # Apply CESM XML settings — xmlchange must be run from inside the case directory
+    # Apply CESM XML settings - xmlchange must be run from inside the case directory
     change_xml_config_files(water_tags, casedir=casedir, **run_config)
 
 
