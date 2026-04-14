@@ -1,11 +1,11 @@
 # Water Tracer Setup
 
-Python tooling for configuring CESM/EAM water tracer simulations. Given a set of tracer definitions and run parameters in JSON, the script automatically patches the Fortran source code, writes the EAM namelist, and applies all required `xmlchange` settings.
+Python tooling for configuring CESM/EAM water tracer simulations. Given a set of tracer definitions and run parameters in JSON, the script automatically edit the Fortran source code, writes the EAM namelist, and applies all required `xmlchange` settings.
 
 ## Project structure
 
 ```
-run_setup/                 # Scripts and config — run from here
+iE3SM_utils/                 # Scripts and config — run from here
 ├── setup_sim.py           # Entry point — run this
 ├── tracer_config.py       # JSON loading
 ├── namelist.py            # Generates user_nl_eam
@@ -42,7 +42,7 @@ This will:
 
 ### `tracer_configuration.json`
 
-Defines the water tracers. `H2O` must always be the first entry — it is the bulk water reference tracer required by the water tagging scheme. All subsequent entries are regional tags.
+Defines the water tracers. `H2O` must always be the first entry — it is the bulk water reference tracer required by the water tagging scheme. All subsequent entries are regional tags. Add or modify regional tags (e.g. `ARC`, `ROW`) with their latitude/longitude bounds and isotope ratios. Here are examples for the two tracers describing the moisture evaporated from the Arctic and from the rest of the world:
 
 ```json
 {
@@ -109,7 +109,7 @@ Controls the CESM case settings applied via `xmlchange`.
 ! *** Water tracer source definition ended.
 ```
 
-Everything between these markers is overwritten on each run. Do not add manual edits inside the marked region — they will be lost. The generated block applies the evaporative flux to each tracer within its defined geographic bounds and sets it to zero elsewhere.
+Everything between these markers is overwritten on each run. Do not add manual edits inside the marked region — they will be lost when you run `setup_run.py`. If you edit manually the `atm_import_export.F90` file, do so after running this script. The generated block applies the evaporative flux to each tracer within its defined geographic bounds and sets it to zero elsewhere.
 
 ## Output fields
 
@@ -118,3 +118,26 @@ The generated `user_nl_eam` includes two output tapes:
 **`fincl1`** (monthly mean, full diagnostics) — base meteorological fields plus, for each tracer: large-scale precipitation, vapour/ice/liquid phase fields, convective precipitation, and surface moisture flux (`QFLX_{TAG}`, non-H2O tracers only).
 
 **`fincl2`** (daily mean, reduced set) — base meteorological fields plus, for each tracer: vapour field and precipitation only.
+
+---
+MIT License
+
+Copyright (c) 2026 Alexandre Audette
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

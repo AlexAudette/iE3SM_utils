@@ -1,5 +1,11 @@
 # Running E3SM with source-aware numerical water tracers
 
+## General information
+
+iE3SM is a version of the Department of Energy Energy Exascale Earth System Model version 2.1 (E3SM v2.1) that provides a source-aware water tagging capability. By defining source regions using the `setup_sim.py` tool, the user can define as many regions as desired for any latitude and longitude bounds. See Audette et al. (2026) for more details. 
+
+[Audette, A., Feldl, N., Singh, H., Heyblom, K., Wang, H., Nusbaumer, J., et al. (2026). Numerical water tracers in the atmospheric component of the Energy Exascale Earth System Model: Implementation and changes in moisture origin. Journal of Advances in Modeling Earth Systems, 18, e2025MS005287.](https://doi.org/10.1029/2025MS005287)
+
 ## Getting the code
 
 Clone the water tracer fork of E3SM:
@@ -17,10 +23,10 @@ If you are on Perlmutter, no further machine configuration is needed. If you are
 
 ### 1. Define your case directory
 
-Set a variable pointing to where your case will live. On Perlmutter, my cases are stored under `/global/homes/<initial>/<username>/cases_E3SM/`:
+Set a variable pointing to where your case will live. On Perlmutter, my cases are stored under `/global/cfs/cdirs/<project>/<username>/E3SM_simulations`:
 
 ```bash
-export CASEDIR="/global/homes/a/aaudette/cases_E3SM/<casename>"
+export CASEDIR="/global/cfs/cdirs/<project>/<username>/E3SM_simulations/<casename>"
 ```
 
 ### 2. Create the case
@@ -45,7 +51,7 @@ The key options are:
 
 
 
-The `iE3SM_utils/` directory contains the Python tooling that automates all water tracer configuration. It can be run from anywhere — it writes directly into `$CASEDIR`, which is passed as a command-line argument.
+The `iE3SM_utils/` directory contains the Python tooling that automates all water tracer configuration. It should be ran form within the `iE3SM_utils/` directory — it writes directly into `$CASEDIR`, which is passed as a command-line argument.
 
 #### What it does
 
@@ -57,10 +63,9 @@ Running `setup_sim.py` performs three steps automatically:
 
 #### Directory structure
 
-Place the `run_setup/` directory alongside your case directory, or copy its contents directly into `$CASEDIR`. The expected layout before running is:
 
 ```
-run_setup/                          ← run scripts from here
+iE3SM_utils/                          ← run scripts from here
 ├── setup_sim.py
 ├── tracer_config.py
 ├── namelist.py
@@ -80,7 +85,7 @@ $CASEDIR/                           ← files will be written here
 
 Before running, review and edit the two JSON files:
 
-**`tracer_configuration.json`** — defines the water tracer regions. `H2O` must always be the first entry. Add or modify regional tags (e.g. `ARC`, `ROW`) with their latitude/longitude bounds and isotope ratios:
+**`tracer_configuration.json`** — defines the water tracer regions. `H2O` must always be the first entry. Add or modify regional tags (e.g. `ARC`, `ROW`) with their latitude/longitude bounds and isotope ratios. Here are examples for the two tracers describing the moisture evaporated from the Arctic and from the rest of the world:
 
 ```json
 {
@@ -127,7 +132,7 @@ The script will print a confirmation line for each step as it completes:
 ```
 Written user_nl_eam
 Patched SourceMods/src.eam/atm_import_export.F90 successfully.
-Running: ./xmlchange --append CAM_CONFIG_OPTS=-water_tracer h2o -water_tag_num 2
+Running: ./xmlchange --append CAM_CONFIG_OPTS=-water_tracer h2o -water_tag_num <N_WTRC>
 Running: ./xmlchange RESUBMIT=5
 ...
 ```
@@ -138,15 +143,26 @@ Once this has completed without errors, the case is fully configured and ready t
 
 ```bash
 cd "${CASEDIR}"
+```
+At this point you might want to adjust the `$CASEDIR/env_mach_pes.xml` which contains the PE layout for the run. You can always change it later, but you will need to recall the `case.setup` script with the `--reset` option, which will reset the `JOB_WALLCLOCK_TIME` variable in `env_workflow.xml`. 
+
+
+```bash
 ./case.setup
+
 ./case.build
 ```
+
+At this point, the model should have built sucessfully and the console should show a message indicating so. The case is now ready to be submitted to the queue or ran interactively on an interactive compute node (not recommended). 
+
 
 ### 5. Submit the case
 
 ```bash
 ./case.submit
 ```
+
+This will submit the job to the queue.
 
 ---
 
@@ -159,7 +175,7 @@ git clone -b maint-2.1 --recursive https://github.com/E3SM-Project/E3SM.git
 cd E3SM
 ```
 
-Available branches include `maint-1.0`, `maint-1.1`, `maint-1.2`, `maint-2.0`, and `maint-2.1`. Do not use `.tar.gz` or `.zip` archives from GitHub — they do not include the submodule code.
+Available branches include `maint-1.0`, `maint-1.1`, `maint-1.2`, `maint-2.0`, and `maint-2.1`. Do not use `.tar.gz` or `.zip` archives from GitHub — they do not include the submodule code. `maint-2.1` is the release from which this project is branched from. Submodules such as CIME have not been modified in iE3SM, and are maintained by the E3SM team. 
 
 ### Input data
 
@@ -174,3 +190,26 @@ On supported platforms (including Perlmutter), all required input data is alread
 
 - Report a bug: https://github.com/E3SM-Project/E3SM/issues
 - Ask a question: https://github.com/E3SM-Project/E3SM/discussions
+
+---
+MIT License
+
+Copyright (c) 2026 Alexandre Audette
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

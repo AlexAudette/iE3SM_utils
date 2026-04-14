@@ -1,7 +1,7 @@
 
 
 wtrc_in_names = 'H2O', 'ARC', 'ROW'
-wtrc_fixed_rstd = 1.0, 0.0023129006855000522, 0.9976870993145
+wtrc_fixed_rstd = 1.0, 0.003, 0.997
 
 wisotope		= .false.
 use_mass_borrower = .true.
