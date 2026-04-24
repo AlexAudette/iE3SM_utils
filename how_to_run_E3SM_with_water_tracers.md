@@ -49,7 +49,13 @@ The key options are:
 
 ### 3. Configure the water tracers with `setup_sim.py`
 
+The `setup_sim.py` script is a Python tool that automates all water tracer configuration. It can be cloned from my github repository:
 
+```bash
+git clone https://github.com/AlexAudette/iE3SM_utils.git
+```
+
+It should be ran form within the `iE3SM_utils/` directory — it writes directly into `$CASEDIR`, which is passed as a command-line argument.
 
 The `iE3SM_utils/` directory contains the Python tooling that automates all water tracer configuration. It should be ran form within the `iE3SM_utils/` directory — it writes directly into `$CASEDIR`, which is passed as a command-line argument.
 

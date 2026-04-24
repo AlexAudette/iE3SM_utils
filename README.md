@@ -5,19 +5,20 @@ Python tooling for configuring CESM/EAM water tracer simulations. Given a set of
 ## Project structure
 
 ```
-iE3SM_utils/                 # Scripts and config — run from here
-├── setup_sim.py           # Entry point — run this
-├── tracer_config.py       # JSON loading
-├── namelist.py            # Generates user_nl_eam
-├── f90_patch.py           # Patches atm_import_export.F90
-├── xml_config.py          # Runs xmlchange commands
-├── tracer_configuration.json  # Tracer definitions (edit this)
-└── run_config.json            # CESM case run parameters (edit this)
+iE3SM_utils/                          ← run scripts from here
+├── setup_sim.py
+├── tracer_config.py
+├── namelist.py
+├── f90_patch.py
+├── xml_config.py
+├── tracer_configuration.json       ← edit this to define your tracers
+└── run_config.json                 ← edit this to set run length, wallclock, etc.
 
-$CASEDIR/                  # Files written here by setup_sim.py
-├── SourceMods/src.eam/
-│   └── atm_import_export.F90
-└── user_nl_eam
+$CASEDIR/                           ← files will be written here
+├── SourceMods/
+│   └── src.eam/
+│       └── atm_import_export.F90   ← will be patched by setup_sim.py
+└── user_nl_eam                     ← will be written by setup_sim.py
 ```
 
 ## Requirements
@@ -27,11 +28,13 @@ the standard library (`json`, `collections`, `os`, `subprocess`, `argparse`).
 
 ## Usage
 
-From the `iE3SM_utils/` directory, pass your case directory as an argument, as well as the configuration of your tracers
-<tracer_config_case>.json:
+From the `iE3SM_utils/` directory, pass `$CASEDIR` and the tracer_configuration as arguments::
 
 ```bash
-python setup_sim.py $CASEDIR <tracer_config_case>
+python setup_sim.py $CASEDIR <tracer_configuration>
+```
+
+The tracer configuration is a JSON file that defines the water tracer regions, withouth the `.json` extension.
 ```
 
 This will:
