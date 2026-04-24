@@ -1,0 +1,97 @@
+{
+    "H2O": {
+        "lat_bounds": [-90, 90],
+        "rstd": 1.0,
+        "description": "Bulk water copy for ratio calculation. Required in each water tracer run."
+    },
+    "LAT85S" : {
+        "lat_bounds": [-90, -80],
+        "rstd": 0.0,
+        "description": "Tracer for the 90S-80S latitude band."
+    },
+    "LAT75S" : {
+        "lat_bounds": [-80, -70],
+        "rstd": 0.0,
+        "description": "Tracer for the 80S-70S latitude band."
+    },
+    "LAT65S" : {
+        "lat_bounds": [-70, -60],
+        "rstd": 0.0,
+        "description": "Tracer for the 70S-60S latitude band."
+    },
+    "LAT55S" : {
+        "lat_bounds": [-60, -50],
+        "rstd": 0.0,
+        "description": "Tracer for the 60S-50S latitude band."
+    },
+    "LAT45S" : {
+        "lat_bounds": [-50, -40],
+        "rstd": 0.0,
+        "description": "Tracer for the 50S-40S latitude band."
+    },
+    "LAT35S" : {
+        "lat_bounds": [-40, -30],
+        "rstd": 0.0,
+        "description": "Tracer for the 40S-30S latitude band."
+    },
+    "LAT25S" : {
+        "lat_bounds": [-30, -20],
+        "rstd": 0.0,
+        "description": "Tracer for the 30S-20S latitude band."
+    },
+    "LAT15S" : {
+        "lat_bounds": [-20, -10],
+        "rstd": 0.0,
+        "description": "Tracer for the 20S-10S latitude band."
+    },
+    "LAT05S" : {
+        "lat_bounds": [-10, 0],
+        "rstd": 0.0,
+        "description": "Tracer for the 10S-0 latitude band."
+    },
+    "LAT05N" : {
+        "lat_bounds": [0, 10],
+        "rstd": 0.0,
+        "description": "Tracer for the 0-10N latitude band."
+    },
+    "LAT15N" : {
+        "lat_bounds": [10, 20],
+        "rstd": 0.0,
+        "description": "Tracer for the 10N-20N latitude band."
+    },
+    "LAT25N" : {
+        "lat_bounds": [20, 30],
+        "rstd": 0.0,
+        "description": "Tracer for the 20N-30N latitude band."
+    },
+    "LAT35N" : {
+        "lat_bounds": [30, 40],
+        "rstd": 0.0,
+        "description": "Tracer for the 30N-40N latitude band."
+    },
+    "LAT45N" : {
+        "lat_bounds": [40, 50],
+        "rstd": 0.0,
+        "description": "Tracer for the 40N-50N latitude band."
+    },
+    "LAT55N" : {
+        "lat_bounds": [50, 60],
+        "rstd": 0.0,
+        "description": "Tracer for the 50N-60N latitude band."
+    },
+    "LAT65N" : {
+        "lat_bounds": [60, 70],
+        "rstd": 0.0,
+        "description": "Tracer for the 60N-70N latitude band."
+    },
+    "LAT75N" : {
+        "lat_bounds": [70, 80],
+        "rstd": 0.0,
+        "description": "Tracer for the 70N-80N latitude band."
+    },
+    "LAT85N" : {
+        "lat_bounds": [80, 90],
+        "rstd": 0.0,
+        "description": "Tracer for the 80N-90N latitude band."
+    }
+}

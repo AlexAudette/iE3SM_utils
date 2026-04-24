@@ -27,10 +27,11 @@ the standard library (`json`, `collections`, `os`, `subprocess`, `argparse`).
 
 ## Usage
 
-From the `iE3SM_utils/` directory, pass your case directory as an argument:
+From the `iE3SM_utils/` directory, pass your case directory as an argument, as well as the configuration of your tracers
+<tracer_config_case>.json:
 
 ```bash
-python setup_sim.py $CASEDIR
+python setup_sim.py $CASEDIR <tracer_config_case>
 ```
 
 This will:

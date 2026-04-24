@@ -24,14 +24,19 @@ def main():
         'casedir',
         help='Path to the CESM case directory (i.e. $CASEDIR)',
     )
+    parser.add_argument(
+        'tracer_config',
+        help='Tracer configuration matching the name of the JSON file in the tracer_configs/ directory',
+    )
     args = parser.parse_args()
     casedir = os.path.realpath(args.casedir)
-
+    tracer_config = str(args.tracer_config)
+    
     if not os.path.isdir(casedir):
         sys.exit('Error: case directory not found: {0}'.format(casedir))
 
     # Load configuration from alongside this script
-    water_tags = load_tracer_configuration(os.path.join(SCRIPT_DIR, 'tracer_configuration.json'))
+    water_tags = load_tracer_configuration(os.path.join(SCRIPT_DIR, 'tracer_configs/{0}.json').format(tracer_config))
     run_config  = load_run_config(os.path.join(SCRIPT_DIR, 'run_config.json'))
 
     # Write the EAM namelist into the case directory
